@@ -24,10 +24,50 @@ with open("banned_users.csv", 'r') as csvfile:
 		banned_users.append(row)
 
 # FUNCTION COLLECTOR
-# Function to print main menu
+
+# USER LOGIN
+# Logic for sorting out if a valid username is submitted
+def user_login():
+	selected_user = input(username_message)
+	query_user = list(selected_user.split())
+	if query_user in banned_users:
+			print(selected_user.title() + banned_message)
+			time.sleep(2)
+			user_login()
+
+# Logic for logging in with valid user and creating a home directory
+	elif query_user in valid_users:
+			print(selected_user.title() + login_message)
+			directory = selected_user + '_home'
+			parent_dir = "/Users/nathanlindorf/lindorf_game_console/user_home_directories"
+			path = os.path.join(parent_dir, directory)
+			isExist = os.path.exists(path)
+			if isExist == True:
+				print(path)
+			elif isExist == False:
+				os.mkdir(path)
+			main_menu()
+
+# Logic for creating a new username
+	elif query_user not in valid_users:
+		if query_user not in banned_users:
+			print(selected_user.title() + no_username_message)
+			account_creation = input()
+			if account_creation.lower() == 'yes' or 'y':
+				requested_user = selected_user
+				valid_users.append([requested_user])
+				with open("valid_users.csv", 'w') as csvfile:
+					writer = csv.writer(csvfile)
+					writer.writerows(valid_users)
+				print("User created!")
+				user_login()
+			elif account_creation.lower() == 'no' or 'n':
+				print(goodbye_message)
+
+# MAIN MENU
 def main_menu():
 	os.system('clear')
-	print(f"Welcome to the main menu, {selected_user}.")
+	print(f"Welcome to the main menu.")
 	print("1. Calculator")
 	print("2. Going to the fair")
 	print("3. Adventures in Zorkland")
@@ -35,24 +75,21 @@ def main_menu():
 	option = int(input('Enter your choice: '))
 	if option == 1:
 		calculator()
-		time.sleep(2)
 		main_menu()
-	elif option== 2:
+	elif option == 2:
 		fair_play()
-		time.sleep(2)
 		main_menu()
 	elif option == 3:
 		adventure_start()
-		time.sleep(5)
 		main_menu()
 	elif option == 9:
 		print(goodbye_message)
 	else:
-		print("Invalid input.  Please try again.")
+		print(invalid_message)
 		time.sleep(1)
 		main_menu()
 
-# USER LOGIN
+
 # Messages
 username_message = "Please enter your username:"
 user_request_message = "Creating a new account now..."
@@ -61,36 +98,6 @@ login_message = ", signing you in now..."
 no_username_message = ", I'm sorry, your account does not exist.  Create an account? (yes/no)"
 in_use_message = "is an account that is already in use.  Please try another username."
 goodbye_message = "OK.  Have a nice day"
+invalid_message = "Invalid input.  Please try again."
 
-# Logic for sorting out if a valid username is submitted
-selected_user = input(username_message)
-query_user = list(selected_user.split())
-if query_user in banned_users:
-		print(selected_user.title() + banned_message)
-# Logic for logging in with valid user and creating a home directory
-elif query_user in valid_users:
-		print(selected_user.title() + login_message)
-		directory = selected_user + '_home'
-		parent_dir = "/Users/nathanlindorf/desktop/python_work"
-		path = os.path.join(parent_dir, directory)
-		isExist = os.path.exists(path)
-		if isExist == True:
-			print(path)
-		elif isExist == False:
-			os.mkdir(path)
-		main_menu()
-
-# Logic for creating a new username
-elif query_user not in valid_users:
-	if query_user not in banned_users:
-		print(selected_user.title() + no_username_message)
-		account_creation = input()
-		if account_creation == 'yes':
-			requested_user = selected_user
-			valid_users.append([requested_user])
-			with open("valid_users.csv", 'w') as csvfile:
-				writer = csv.writer(csvfile)
-				writer.writerows(valid_users)
-			print(goodbye_message)
-		elif account_creation == 'no':
-			print(goodbye_message)
+user_login()
