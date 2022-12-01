@@ -1,4 +1,4 @@
-# Lindorf Game Console, user login and main screen
+# "Lindorf Game Console" user login and main screen
 
 # LIBRARY LOAD
 import csv
@@ -26,27 +26,35 @@ with open("banned_users.csv", 'r') as csvfile:
 # FUNCTION COLLECTOR
 
 # USER LOGIN
-# Logic for sorting out if a valid username is submitted
 def user_login():
+
+# Storing login user as a static variable
 	selected_user = input(username_message)
+	active_user = selected_user
+
+# Logic for banned user selection
 	query_user = list(selected_user.split())
 	if query_user in banned_users:
-			print(selected_user.title() + banned_message)
-			time.sleep(2)
-			user_login()
+		print(selected_user.title() + banned_message)
+		time.sleep(2)
+		user_login()
 
-# Logic for logging in with valid user and creating a home directory
+# Logic for valid user login and creating a home directory
 	elif query_user in valid_users:
-			print(selected_user.title() + login_message)
-			directory = selected_user + '_home'
-			parent_dir = "/Users/nathanlindorf/lindorf_game_console/user_home_directories"
-			path = os.path.join(parent_dir, directory)
-			isExist = os.path.exists(path)
-			if isExist == True:
-				print(path)
-			elif isExist == False:
-				os.mkdir(path)
-			main_menu()
+		print(selected_user.title() + login_message)
+		directory = selected_user + '_home'
+		parent_dir = "/Users/nathanlindorf/lindorf_game_console/user_home_directories"
+		path = os.path.join(parent_dir, directory)
+		isExist = os.path.exists(path)
+		if isExist == True:
+			print(path)
+		else:
+			isExist == False
+			os.mkdir(path)
+		writer_text = open(r"selected_user.txt", 'w')
+		writer_text.write(active_user)
+		writer_text.close()
+		main_menu()
 
 # Logic for creating a new username
 	elif query_user not in valid_users:
@@ -61,7 +69,8 @@ def user_login():
 					writer.writerows(valid_users)
 				print("User created!")
 				user_login()
-			elif account_creation.lower() == 'no' or 'n':
+			else:
+				account_creation.lower() == 'no' or 'n'
 				print(goodbye_message)
 
 # MAIN MENU
